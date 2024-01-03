@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:favorite_places/widgets/image_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +19,11 @@ class AddPlaceScreen extends ConsumerStatefulWidget {
 class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredPlaceName = '';
+  File? _selectedImage;
+
+  void pickeImageHandler(File image) {
+    _selectedImage = image;
+  }
 
   String? _titleValidator(String? text) {
     if (text == null || text.isEmpty) {
@@ -29,15 +37,17 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   }
 
   void _onSubmitForm() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
+    if (_selectedImage == null) {
+      return;
+    } else {
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
 
-      ref.read(addPlaceProvider.notifier).addNewPlace(
-            Place(
-              name: _enteredPlaceName,
-            ),
-          );
-      Navigator.of(context).pop();
+        ref.read(addPlaceProvider.notifier).addNewPlace(
+              Place(name: _enteredPlaceName, image: _selectedImage!),
+            );
+        Navigator.of(context).pop();
+      }
     }
   }
 
@@ -57,10 +67,13 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                 decoration: const InputDecoration(
                   label: Text('Title'),
                 ),
-                style: TextStyle(color: Theme.of(context).colorScheme.onBackground),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground),
                 validator: _titleValidator,
                 onSaved: _saveTitleHandler,
               ),
+              const SizedBox(height: 12),
+              ImageInput(onPickImage: pickeImageHandler),
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 icon: const Icon(Icons.add),
