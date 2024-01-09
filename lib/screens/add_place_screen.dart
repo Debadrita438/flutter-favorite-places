@@ -21,9 +21,14 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredPlaceName = '';
   File? _selectedImage;
+  PlaceLocation? _selectedLocation;
 
   void pickeImageHandler(File image) {
     _selectedImage = image;
+  }
+
+  void selectLocationHandler(PlaceLocation location) {
+    _selectedLocation = location;
   }
 
   String? _titleValidator(String? text) {
@@ -38,14 +43,18 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   }
 
   void _onSubmitForm() {
-    if (_selectedImage == null) {
+    if (_selectedImage == null || _selectedLocation == null) {
       return;
     } else {
       if (_formKey.currentState!.validate()) {
         _formKey.currentState!.save();
 
         ref.read(addPlaceProvider.notifier).addNewPlace(
-              Place(name: _enteredPlaceName, image: _selectedImage!),
+              Place(
+                name: _enteredPlaceName,
+                image: _selectedImage!,
+                location: _selectedLocation!,
+              ),
             );
         Navigator.of(context).pop();
       }
@@ -76,7 +85,7 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
               const SizedBox(height: 12),
               ImageInput(onPickImage: pickeImageHandler),
               const SizedBox(height: 12),
-              const LocationInput(),
+              LocationInput(onSelectLocation: selectLocationHandler),
               const SizedBox(height: 12),
               ElevatedButton.icon(
                 icon: const Icon(Icons.add),

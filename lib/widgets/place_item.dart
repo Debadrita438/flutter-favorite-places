@@ -42,6 +42,12 @@ class PlaceItem extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.onBackground,
               ),
         ),
+        subtitle: Text(
+          placeList[index].location.address,
+          style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+        ),
         onTap: () => _onNavigationPlace(placeList[index], context),
       ),
     );
