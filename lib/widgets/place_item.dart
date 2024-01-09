@@ -34,8 +34,9 @@ class PlaceItem extends ConsumerWidget {
     return ListView.builder(
       itemCount: placeList.length,
       itemBuilder: (context, index) => ListTile(
-        leading:
-            CircleAvatar(backgroundImage: FileImage(placeList[index].image)),
+        leading: CircleAvatar(
+          backgroundImage: FileImage(placeList[index].image),
+        ),
         title: Text(
           placeList[index].name,
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
