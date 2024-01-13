@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:favorite_places/models/place.dart';
 import 'package:favorite_places/screens/place_details_screen.dart';
-import 'package:favorite_places/providers/add_place_provider.dart';
 
-class PlaceItem extends ConsumerWidget {
-  const PlaceItem({super.key});
+class PlaceItem extends StatelessWidget {
+  const PlaceItem({super.key, required this.placeList});
+
+  final List<Place> placeList;
 
   void _onNavigationPlace(Place selectedPlace, BuildContext context) {
     Navigator.of(context).push(
@@ -17,9 +17,7 @@ class PlaceItem extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<Place> placeList = ref.watch(addPlaceProvider);
-
+  Widget build(BuildContext context) {
     if (placeList.isEmpty) {
       return Center(
         child: Text(

@@ -8,25 +8,23 @@ import 'package:sqflite/sqlite_api.dart';
 
 import 'package:favorite_places/models/place.dart';
 
-class AddPlaceNotifier extends StateNotifier<List<Place>> {
-  AddPlaceNotifier() : super(const []);
-
-  Future<void> _createDbHandler(Database db, int? version) {
-    return db.execute(
-        'CREATE TABLE user_places(id TEXT PRIMARY KEY, title TEXT, image TEXT, lat REAL, lng REAL, address TEXT)');
-  }
-
-  Future<Database> _getDatabase() async {
+Future<Database> _getDatabase() async {
     final dbPath = await sql.getDatabasesPath();
     final db = await sql.openDatabase(
       path.join(dbPath, 'places.db'),
-      onCreate: _createDbHandler,
+      onCreate: (db, version) {
+        return db.execute(
+            'CREATE TABLE user_places(id TEXT PRIMARY KEY, title TEXT, image TEXT, lat REAL, lng REAL, address TEXT)');
+      },
       version: 1,
     );
     return db;
   }
 
-  void fetchPlaces() async {
+class AddPlaceNotifier extends StateNotifier<List<Place>> {
+  AddPlaceNotifier() : super(const []);
+
+  Future<void> fetchPlaces() async {
     final db = await _getDatabase();
     final data = await db.query('user_places');
 
@@ -60,8 +58,7 @@ class AddPlaceNotifier extends StateNotifier<List<Place>> {
     );
 
     final db = await _getDatabase();
-
-    db.insert('places.db', {
+    db.insert('user_places', {
       'id': newPlace.id,
       'title': newPlace.name,
       'image': newPlace.image.path,
